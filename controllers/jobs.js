@@ -41,7 +41,7 @@ const updateJob = async (req, res) => {
     if (company === "" || position === "") {
         throw new BadRequestError("Company or Position fields cannot be empty");
     }
-    const job = await Job.findByIdAndUpdate(
+    const job = await Job.findOneAndUpdate(
         { _id: jobId, createdBy: userId },
         req.body,
         { new: true, runValidators: true },
@@ -58,7 +58,7 @@ const deleteJob = async (req, res) => {
         params: { id: jobId },
     } = req;
 
-    const job = await Job.findByIdAndRemove({
+    const job = await Job.findOneAndRemove({
         _id: jobId,
         createdBy: userId,
     });
