@@ -10,6 +10,10 @@ const connectDB = require("./db/connect");
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 
+// routes
+const authRouter = require("./routes/auth");
+const jobsRouter = require("./routes/jobs");
+
 app.use(express.json());
 
 // routes
