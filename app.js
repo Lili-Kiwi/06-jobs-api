@@ -3,24 +3,39 @@ require("express-async-errors");
 const express = require("express");
 const app = express();
 
+const helmet = require("helmet");
+const cors = require("cors");
+const xss = require("xss-clean");
+const rateLimiter = require("express-rate-limit");
+
 // db
 const connectDB = require("./db/connect");
+const authenticatedUser = require("./middleware/authentication");
+
+// routers
+const authRouter = require("./routes/auth");
+const jobsRouter = require("./routes/jobs");
 
 // error handling
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 
-// routes
-const authRouter = require("./routes/auth");
-const jobsRouter = require("./routes/jobs");
-
 app.use(express.json());
+app.use(helmet());
+app.use(cors());
+app.use(xss());
+app.set("trust proxy", 1);
+app.use(
+    rateLimiter({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // Max of 100 requests per windowMs
+    }),
+);
 
 // routes
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/jobs", jobsRouter);
+app.use("/api/v1/jobs", authenticatedUser, jobsRouter);
 
-// errors
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 

@@ -8,14 +8,9 @@ const {
     updateJob,
     getJob,
 } = require("../controllers/jobs");
-const auth = require("../middleware/authentication");
 
-router.route("/").post(auth, createJob).get(auth, getAllJobs);
+router.route("/").post(createJob).get(getAllJobs);
 
-router
-    .route("/:id")
-    .get(auth, getJob)
-    .delete(auth, deleteJob)
-    .patch(auth, updateJob);
+router.route("/:id").get(getJob).delete(deleteJob).patch(updateJob);
 
 module.exports = router;
